@@ -1,11 +1,5 @@
 """
-Cat Trap Algorithms
 
-This is the relevant code for the LinkedIn Learning Course 
-AI Algorithms for Game Design with Python, by Eduardo Corpeño.
-
-For the GUI, this code uses the Cat Trap UI VSCode extension
-included in the extensions folder.
 """
 
 import random
