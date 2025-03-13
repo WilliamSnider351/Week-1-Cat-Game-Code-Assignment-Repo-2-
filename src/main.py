@@ -1,18 +1,5 @@
 """
-main.py: Entry Point for the Cat Trap Game Server
 
-This script initializes and runs the Cat Trap game server, handling client
-connections and managing game state updates through WebSocket communication.
-The client is the Cat Trap GUI VSCode extension.
-
-Usage:
-    Run this file to start the game server.
-    Start the Cat Trap GUI Extension: (Ctrl+Shift+P, then "Start Cat Trap Game")
-
-Dependencies:
-    - cat_trap_algorithms: Contains the game logic and algorithms.
-    - websockets: Used for WebSocket server communication.
-    - asyncio: Enables asynchronous operations.
 """
 
 import asyncio
