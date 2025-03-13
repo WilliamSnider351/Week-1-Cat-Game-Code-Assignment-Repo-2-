@@ -35,7 +35,7 @@ async def handler(websocket, path):
     try:
         async for message in websocket:
             if debug_mode:
-                print(f'Received message: {message}')  # Debug log
+                print(f'Received message: {message}') 
             data = json.loads(message)
             if data['command'] == 'new_game':
                 game_status = GameStatus.GAME_ON
@@ -44,7 +44,6 @@ async def handler(websocket, path):
                 await websocket.send(json.dumps({'command': 'updateGrid', 'data': json.dumps(game.hexgrid.tolist())}))
             elif data['command'] == 'move':
                 if not game:
-                    # Recreate the game using the provided grid
                     size = len(data['grid'])
                     game = CatTrapGame(size)
                     game.set_hexgrid(np.array(data['grid'], dtype=int))
@@ -72,12 +71,11 @@ async def handler(websocket, path):
                 await websocket.send(json.dumps({'command': 'updateGrid', 'data': json.dumps(game.hexgrid.tolist())}))
             elif data['command'] == 'edit':
                 if not game:
-                    # Recreate the game using the provided grid
                     size = len(data['grid'])
                     game = CatTrapGame(size)
                     game.hexgrid = np.array(data['grid'], dtype=int)
-                    cat = np.argwhere(game.hexgrid == CAT_TILE)  # Find the cat
-                    if cat.size > 0: # Cat may be absent in edit mode
+                    cat = np.argwhere(game.hexgrid == CAT_TILE)  
+                    if cat.size > 0: 
                         game.cat = list(cat[0])
                 action = data['action']
                 if action == 'block':
@@ -90,13 +88,12 @@ async def handler(websocket, path):
                 await websocket.send(json.dumps({'command': 'updateGrid', 'data': json.dumps(game.hexgrid.tolist())}))
             elif data['command'] == 'request_grid':
                 if not game:
-                    # Recreate the game using the provided grid
                     size = len(data['grid'])
                     if size > 0:
                         game = CatTrapGame(size)
                         game.hexgrid = np.array(data['grid'], dtype=int)
-                        cat = np.argwhere(game.hexgrid == CAT_TILE)  # Find the cat
-                        if cat.size > 0: # Cat may be absent in edit mode
+                        cat = np.argwhere(game.hexgrid == CAT_TILE) 
+                        if cat.size > 0: 
                             game.cat = list(cat[0])
                     else:
                         game = CatTrapGame(7)
