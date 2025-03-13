@@ -15,7 +15,6 @@ import copy
 import time
 import numpy as np
 
-# Constants
 CAT_TILE = 6
 BLOCKED_TILE = 1
 EMPTY_TILE = 0
