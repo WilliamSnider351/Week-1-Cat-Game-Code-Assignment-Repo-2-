@@ -54,7 +54,7 @@ class CatTrapGame:
 
     def set_hexgrid(self, hexgrid):
         self.hexgrid = hexgrid
-        self.cat = list(np.argwhere(self.hexgrid == CAT_TILE)[0])  # Find the cat
+        self.cat = list(np.argwhere(self.hexgrid == CAT_TILE)[0])  
         if VERBOSE:
             print('\n======= NEW GAME =======')
             self.print_hexgrid()
@@ -70,14 +70,14 @@ class CatTrapGame:
         self.cat = coord
 
     def move_cat(self, coord):
-        self.hexgrid[tuple(self.cat)] = EMPTY_TILE  # Clear previous cat position
+        self.hexgrid[tuple(self.cat)] = EMPTY_TILE  
         self.place_cat(coord)
     
     def get_cat_moves(self):
         hexgrid = self.hexgrid
         r, c = self.cat
         n = CatTrapGame.size
-        col_offset = r % 2  # Offset for columns based on row parity
+        col_offset = r % 2  
         moves = []
 
         directions = {
@@ -90,7 +90,7 @@ class CatTrapGame:
         }
 
         for dr, dc in directions.values():
-            tr, tc = r + dr, c + dc  # Calculate target row and column
+            tr, tc = r + dr, c + dc  
             if 0 <= tr < n and 0 <= tc < n and hexgrid[tr, tc] == EMPTY_TILE:
                 moves.append([tr, tc])
 
@@ -115,9 +115,9 @@ class CatTrapGame:
     
     def print_hexgrid(self):
         tile_map = {
-            EMPTY_TILE: ' ⬡',   # Alternative: '-'
-            BLOCKED_TILE: ' ⬢', # Alternative: 'X'
-            CAT_TILE: '🐈'      # Alternative: 'C'
+            EMPTY_TILE: ' ⬡',  
+            BLOCKED_TILE: ' ⬢', 
+            CAT_TILE: '🐈'    
         }
         for r in range(CatTrapGame.size):
             prefix = ' ' if r % 2 != 0 else ''
@@ -179,7 +179,7 @@ class CatTrapGame:
     def eval_custom(self, cat_turn):
         n = CatTrapGame.size
         move_score = self.eval_moves(cat_turn) / 6.0  # Normalize for max 6 moves
-        proximity_score = self.eval_straight_exit(cat_turn) / n # Normalize
+        proximity_score = self.eval_straight_exit(cat_turn) / n
 
         center_row, center_col = n // 2, n // 2
         cat_row, cat_col = self.cat
@@ -240,10 +240,10 @@ class CatTrapGame:
             CatTrapGame.terminated = True
             return TIMEOUT, 0
         
-        legal_moves = self.get_cat_moves() # Possible directions: E, W, NE, NW, SE, SW
+        legal_moves = self.get_cat_moves() 
         if not legal_moves:
             max_turns = 2 * (CatTrapGame.size ** 2)
-            utility = (max_turns - depth) * (-500) # Utility for cat's defeat 
+            utility = (max_turns - depth) * (-500) 
             return self.cat, utility
         
         if depth == CatTrapGame.max_depth:
@@ -278,7 +278,7 @@ class CatTrapGame:
             c == 0 or c == n - 1
         ):
             max_turns = 2 * (CatTrapGame.size ** 2)
-            return (max_turns - depth) * (500) # Utility for cat's victory
+            return (max_turns - depth) * (500) 
         
         if depth == CatTrapGame.max_depth:
             CatTrapGame.reached_max_depth = True
@@ -308,10 +308,10 @@ class CatTrapGame:
             CatTrapGame.terminated = True
             return TIMEOUT, 0
         
-        legal_moves = self.get_cat_moves() # Possible directions: E, W, NE, NW, SE, SW
+        legal_moves = self.get_cat_moves() 
         if not legal_moves:
             max_turns = 2 * (CatTrapGame.size ** 2)
-            utility = (max_turns - depth) * (-500) # Utility for cat's defeat 
+            utility = (max_turns - depth) * (-500) 
             return self.cat, utility
         
         if depth == CatTrapGame.max_depth:
@@ -332,7 +332,7 @@ class CatTrapGame:
                 best_value = value
                 best_move = move
 
-            if best_value >= beta: # Pruning
+            if best_value >= beta: 
                 return best_move, best_value
             alpha = max(alpha, best_value)
 
@@ -350,7 +350,7 @@ class CatTrapGame:
             c == 0 or c == n - 1
         ):
             max_turns = 2 * (CatTrapGame.size ** 2)
-            return (max_turns - depth) * (500) # Utility for cat's victory
+            return (max_turns - depth) * (500) 
         
         if depth == CatTrapGame.max_depth:
             CatTrapGame.reached_max_depth = True
@@ -369,7 +369,7 @@ class CatTrapGame:
             
             best_value = min(best_value, value)
 
-            if best_value <= alpha: # Pruning
+            if best_value <= alpha: 
                 return best_value
             beta = min(beta, best_value)
 
