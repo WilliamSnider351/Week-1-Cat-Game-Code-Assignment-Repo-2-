@@ -1,5 +1,13 @@
 """
+This code is consistent with the revised verison of the course, which went live 3-11-2025.  With these 2 files 
+(main.py and cat_trap_algorithms.py), I was able to find success.  With my original 3 files (CatTrap.py, CatGame.py, hexutil.py),
+I was unable to run the game, so I spoke with Eduardo Corpeno via email.  He advised that I may have success running the game
+by using this revised version, which included GitHub Codespaces.  
 
+He mentioned that users were having trouble installing and setting up the environment, 
+which is why he created the revised version.  I ultimately found success getting the game to run by using GitHub Codespaces.  
+I was able to play the game.  In order to run the game, one must run the main.py file and use Control + Shift + P, "Start Cat Trap Game".
+You may need to run main.py from my Repository 2, which is entitled Week 1 Cat Game Code Assignment Repo 2.
 """
 
 import random
@@ -16,11 +24,6 @@ VERBOSE = True
 TIMEOUT = [-1, -1]
 
 class CatTrapGame:
-    """
-    Represents a Cat Trap game state. Includes methods for managing game state
-    and selecting moves for the cat using different AI algorithms.
-    """
-
     size = 0
     start_time = time.time()
     deadline = time.time()
@@ -35,7 +38,6 @@ class CatTrapGame:
         CatTrapGame.size = size
 
     def initialize_random_hexgrid(self):
-        """Randomly initialize blocked hexgrid."""
         tiles = CatTrapGame.size ** 2
         num_blocks = random.randint(round(0.067 * tiles), round(0.13 * tiles))
         count = 0
@@ -52,7 +54,6 @@ class CatTrapGame:
             self.print_hexgrid()
 
     def set_hexgrid(self, hexgrid):
-        """Copy incoming hexgrid."""
         self.hexgrid = hexgrid
         self.cat = list(np.argwhere(self.hexgrid == CAT_TILE)[0])  # Find the cat
         if VERBOSE:
@@ -74,16 +75,12 @@ class CatTrapGame:
         self.place_cat(coord)
     
     def get_cat_moves(self):
-        """
-        Get a list of valid moves for the cat.
-        """
         hexgrid = self.hexgrid
         r, c = self.cat
         n = CatTrapGame.size
         col_offset = r % 2  # Offset for columns based on row parity
         moves = []
 
-        # Directions with column adjustments
         directions = {
             'E': (0, 1),
             'W': (0, -1),
@@ -101,9 +98,6 @@ class CatTrapGame:
         return moves
 
     def apply_move(self, move, cat_turn):
-        """
-        Apply a move to the game state.
-        """
         if self.hexgrid[tuple(move)] != EMPTY_TILE:
             action_str = "move cat to" if cat_turn else "block"
             self.print_hexgrid()
@@ -118,32 +112,21 @@ class CatTrapGame:
             self.hexgrid[tuple(move)] = BLOCKED_TILE
 
     def time_left(self):
-        """
-        Calculate the time remaining before the deadline.
-        """
         return (CatTrapGame.deadline - time.time()) * 1000
     
     def print_hexgrid(self):
-        """
-        Print the current state of the game board using special characters.
-        """
         tile_map = {
             EMPTY_TILE: ' ⬡',   # Alternative: '-'
             BLOCKED_TILE: ' ⬢', # Alternative: 'X'
             CAT_TILE: '🐈'      # Alternative: 'C'
         }
         for r in range(CatTrapGame.size):
-            # Add a leading space for odd rows for staggered effect
             prefix = ' ' if r % 2 != 0 else ''
             row_display = ' '.join(tile_map[cell] for cell in self.hexgrid[r])
             print(prefix + row_display)
         return
 
     def evaluation(self, cat_turn):
-        """
-        Evaluation function. 
-        Options: 'moves', 'straight_exit', 'custom'.
-        """
         evaluation_function = 'custom'
 
         if evaluation_function == 'moves':
@@ -155,16 +138,10 @@ class CatTrapGame:
         return 0
 
     def eval_moves(self, cat_turn):
-        """
-        Evaluate based on the number of valid moves available for the cat.
-        """
         cat_moves = self.get_cat_moves()
         return len(cat_moves) if cat_turn else len(cat_moves) - 1
 
     def get_target_position(self, scout, direction):
-        """
-        Get the target position based on the specified direction.
-        """
         r, c = scout
         col_offset = r % 2  # Offset for columns based on row parity
         
@@ -183,9 +160,6 @@ class CatTrapGame:
         return [r, c]
 
     def eval_straight_exit(self, cat_turn):
-        """
-        Evaluate the cat's access to the nearest board edge along straight paths.
-        """
         distances = []
         directions =  ['E', 'W', 'NE', 'NW', 'SE', 'SW']
         n = CatTrapGame.size
@@ -204,17 +178,10 @@ class CatTrapGame:
         return CatTrapGame.size - (distances[0] if cat_turn else distances[1])
 
     def eval_custom(self, cat_turn):
-        """
-        Custom evaluation function combining moves, proximity, and progress penalties.
-        """
         n = CatTrapGame.size
-        # Move Score
         move_score = self.eval_moves(cat_turn) / 6.0  # Normalize for max 6 moves
-
-        # Proximity Score
         proximity_score = self.eval_straight_exit(cat_turn) / n # Normalize
 
-        # Calculate Penalty based on euclidean distance to center
         center_row, center_col = n // 2, n // 2
         cat_row, cat_col = self.cat
         distance = ((cat_row - center_row) ** 2 + (cat_col - center_col) ** 2) ** 0.5
@@ -225,32 +192,11 @@ class CatTrapGame:
         if not cat_turn:
             penalty += 0.2 
 
-        # Combine Scores
         score = 0.2 * move_score + proximity_score - 0.5 * penalty
-
         return score
-
-    # ===================== Intelligent Agents =====================
-    """
-    Intelligent Agents for the Cat Trap game. These agents examine the game 
-    state, and return the new position of the cat (a move).
-    Two special return values for failure may be returned (timeout or trapped).
-
-    Parameters:
-      - random_cat: A random move for the cat.
-      - minimax: Use the Minimax algorithm.
-      - alpha_beta: Use Alpha-Beta Pruning.
-      - depth_limited: Use Depth-Limited Search.
-      - max_depth: Maximum depth to explore for Depth-Limited Search.
-      - iterative_deepening: Use Iterative Deepening.
-      - allotted_time: Maximum time in seconds for the cat to respond.
-
-    If no algorithm is selected, the cat gives up (as if trapped).
-    """
 
     def select_cat_move(self, random_cat, minimax, alpha_beta, depth_limited,
                         max_depth, iterative_deepening, allotted_time):
-        """Select a move for the cat based on the chosen algorithm."""
         CatTrapGame.start_time = time.time()
         CatTrapGame.deadline = CatTrapGame.start_time + allotted_time
         CatTrapGame.terminated = False
@@ -285,16 +231,12 @@ class CatTrapGame:
         return move
 
     def random_cat_move(self):
-        """Randomly select a move for the cat."""
         moves = self.get_cat_moves()
         if moves:
             return random.choice(moves)
         return self.cat
 
     def max_value(self, depth):
-        """
-        Calculate the maximum value for the current game in the Minimax algorithm.
-        """
         if self.time_left() < LAST_CALL_MS:
             CatTrapGame.terminated = True
             return TIMEOUT, 0
@@ -326,18 +268,10 @@ class CatTrapGame:
         return best_move, best_value
 
     def min_value(self, depth):
-        """
-        Calculate the minimum value for the current game in the Minimax algorithm.
-
-        Unlike max_value, min_value does not iterate over specific 
-        directions (E, W, NE, NW, etc.). Instead, it examines every 
-        possible free tile on the board.
-        """
         if self.time_left() < LAST_CALL_MS:
             CatTrapGame.terminated = True
             return 0
 
-        # Check if terminal state
         r, c = self.cat
         n = CatTrapGame.size
         if (
@@ -353,7 +287,6 @@ class CatTrapGame:
         
         best_value = float('inf')
 
-        # Iterate through all legal moves for the player (empty tiles)
         legal_moves = [list(rc) for rc in np.argwhere(self.hexgrid == EMPTY_TILE)]
         for move in legal_moves:
             next_game = copy.deepcopy(self)
@@ -368,17 +301,10 @@ class CatTrapGame:
         return best_value
 
     def minimax(self):
-        """
-        Perform the Minimax algorithm to determine the best move.
-        """
         best_move, _ = self.max_value(depth = 0) 
         return best_move
 
     def alpha_beta_max_value(self, alpha, beta, depth):
-        """
-        Calculate the maximum value for the current game state 
-        using Alpha-Beta pruning.
-        """
         if self.time_left() < LAST_CALL_MS:
             CatTrapGame.terminated = True
             return TIMEOUT, 0
@@ -414,19 +340,10 @@ class CatTrapGame:
         return best_move, best_value
 
     def alpha_beta_min_value(self, alpha, beta, depth):
-        """
-        Calculate the minimum value for the current game state 
-        using Alpha-Beta pruning.
-
-        Unlike max_value, min_value does not iterate over specific 
-        directions (E, W, NE, NW, etc.). Instead, it examines every 
-        possible free tile on the board.
-        """
         if self.time_left() < LAST_CALL_MS:
             CatTrapGame.terminated = True
             return 0
 
-        # Check if terminal state
         r, c = self.cat
         n = CatTrapGame.size
         if (
@@ -442,7 +359,6 @@ class CatTrapGame:
         
         best_value = float('inf')
 
-        # Iterate through all legal moves for the player (empty tiles)
         legal_moves = [list(rc) for rc in np.argwhere(self.hexgrid == EMPTY_TILE)]
         for move in legal_moves:
             next_game = copy.deepcopy(self)
@@ -461,18 +377,12 @@ class CatTrapGame:
         return best_value
 
     def alpha_beta(self):
-        """
-        Perform the Alpha-Beta pruning algorithm to determine the best move.
-        """
         alpha = float('-inf')
         beta = float('inf')
         best_move, _ = self.alpha_beta_max_value(alpha, beta, depth = 0)
         return best_move
 
     def iterative_deepening(self, alpha_beta):
-        """
-        Perform iterative deepening search with an option to use Alpha-Beta pruning.
-        """
         best_depth = 0
         output_move = TIMEOUT
         
@@ -492,7 +402,6 @@ class CatTrapGame:
                     print(f'Done with a tree of depth {depth} '
                           f'after {elapsed_time:.3f}ms')
 
-                # Stop exploring deeper levels if the maximum depth was never reached.
                 if not CatTrapGame.reached_max_depth:
                     break
 
