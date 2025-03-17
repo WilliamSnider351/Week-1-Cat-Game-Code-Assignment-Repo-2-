@@ -142,7 +142,7 @@ class CatTrapGame:
 
     def get_target_position(self, scout, direction):
         r, c = scout
-        col_offset = r % 2  # Offset for columns based on row parity
+        col_offset = r % 2  
         
         if direction == 'E':
             return [r, c + 1]
@@ -157,7 +157,6 @@ class CatTrapGame:
         elif direction == 'SW':
             return [r + 1, c - 1 + col_offset]
         return [r, c]
-
     def eval_straight_exit(self, cat_turn):
         distances = []
         directions =  ['E', 'W', 'NE', 'NW', 'SE', 'SW']
@@ -167,18 +166,18 @@ class CatTrapGame:
             r, c = self.cat
             while not (r < 0 or r >= n or c < 0 or c >= n):
                 if self.hexgrid[r, c] == BLOCKED_TILE:
-                    distance += n # Increase cost for blocked paths
+                    distance += n 
                     break
                 distance += 1
                 r, c = self.get_target_position([r, c], dir)
             distances.append(distance)
 
-        distances.sort() # Ascending order, so distances[0] is the best
+        distances.sort() 
         return CatTrapGame.size - (distances[0] if cat_turn else distances[1])
 
     def eval_custom(self, cat_turn):
         n = CatTrapGame.size
-        move_score = self.eval_moves(cat_turn) / 6.0  # Normalize for max 6 moves
+        move_score = self.eval_moves(cat_turn) / 6.0  
         proximity_score = self.eval_straight_exit(cat_turn) / n
 
         center_row, center_col = n // 2, n // 2
