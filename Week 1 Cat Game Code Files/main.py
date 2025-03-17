@@ -8,6 +8,8 @@ He mentioned that users were having trouble installing and setting up the enviro
 I ultimately found success getting the game to run by using GitHub Codespaces.  I was able to play the game.  In order to run 
 the game, one must run the main.py file and use Control + Shift + P, "Start Cat Trap Game".  You should run main.py from 
 my Repository 2, which is entitled Week 1 Cat Game Code Assignment Repo 2.  Do this in Codespaces at Github.
+
+CatGame.py in Repo 1 contains my evaluation function code.
 """
 
 import asyncio
