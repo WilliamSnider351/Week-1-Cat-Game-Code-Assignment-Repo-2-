@@ -4,10 +4,7 @@ This code is consistent with the revised verison of the course, which went live 
 I was unable to run the game, so I spoke with Eduardo Corpeno via email.  He advised that I may have success running the game
 by using this revised version, which included GitHub Codespaces.  
 
-He mentioned that users were having trouble installing and setting up the environment, 
-which is why he created the revised version.  I ultimately found success getting the game to run by using GitHub Codespaces.  
-I was able to play the game.  In order to run the game, one must run the main.py file and use Control + Shift + P, "Start Cat Trap Game".
-You may need to run main.py from my Repository 2, which is entitled Week 1 Cat Game Code Assignment Repo 2.
+
 """
 
 import asyncio
